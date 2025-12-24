@@ -11,6 +11,9 @@
 - **Data Persistence:** All information is saved in a `Bank.db` file, so you don't lose your data when closing the program.
 - **Security:** Implements SQL parameterization (`?` placeholders) to prevent **SQL Injection** attacks.
 
+> [!NOTE]
+> This project is under constant development. I'm currently working on improving the UI and adding new banking features! 🚀
+
 ## 🛠️ Technologies Used
 - **Language:** Python 3.x
 - **Database:** SQLite3
