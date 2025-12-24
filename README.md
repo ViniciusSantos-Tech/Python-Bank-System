@@ -17,8 +17,8 @@
 - **Concepts:** Classes (OOP), f-strings, Docstrings, and SQL queries.
 
 ## 📸 How it looks
-
-
+### The image below shows how user data and account balances are organized and stored within the SQLite database.
+![Database Structure](assets/photo.png)
 
 ## 🔧 How to Run
 
