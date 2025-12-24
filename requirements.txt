@@ -1,0 +1,2 @@
+# This project uses only Python built-in libraries (sqlite3, time).
+# No external pip installations required.
