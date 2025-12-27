@@ -2,8 +2,9 @@
 #Python Bank System
 import sqlite3
 import streamlit as st
-
-connection = sqlite3.connect("Bank.db", check_same_thread=False)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+db_path = os.path.join(BASE_DIR, "Bank.db")
+connection = sqlite3.connect(db_path, check_same_thread=False)
 
 if "page" not in st.session_state:
     st.session_state.page = "bank"
