@@ -99,20 +99,23 @@ if not st.session_state.logged_in:
         st.title("🏦 Banking Login")
         user_input = st.text_input("Username")
         pass_input = st.text_input("Password", type="password")
+
+        col1, col2 = st.columns([0.2, 1])
+        with col1:
+            if st.button("Login"):
+                app_login = Login()
+                result = app_login.validate_credentials(user_input, pass_input)
+                if result:
+                    st.session_state.user = result
+                    st.session_state.logged_in = True
+                    st.rerun()
+                else:
+                    st.error("Invalid username or password")
         
-        if st.button("Login"):
-            app_login = Login()
-            result = app_login.validate_credentials(user_input, pass_input)
-            if result:
-                st.session_state.user = result
-                st.session_state.logged_in = True
+        with col2:
+            if st.button("Don't have an account? Sign up"):
+                st.session_state.register_mode = True
                 st.rerun()
-            else:
-                st.error("Invalid username or password")
-        
-        if st.button("Don't have an account? Sign up"):
-            st.session_state.register_mode = True
-            st.rerun()
 
 else:
     app_bank = Bank(st.session_state.user)
