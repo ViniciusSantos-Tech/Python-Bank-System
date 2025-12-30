@@ -1,6 +1,6 @@
 # $${\color{blue}\text{🏦 Python Bank System}}$$
 ### A modern, interactive, and secure **web banking application** built with Python, SQLite, and Streamlit.  
-This project showcases the evolution from a CLI system to a **full interactive web interface**, focusing on **OOP**, **database persistence**, and **state management**.
+This project showcases the evolution from a simple CLI system to a **full interactive web interface**, focusing on **OOP**, **database persistence**, and **state management**.
 
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
 
@@ -11,58 +11,44 @@ The project is a study-driven yet professional-grade project designed to simulat
 
 Although the application includes a web interface built with **Streamlit**, the **main focus of this project is backend engineering**, including:
 
-- Business rules implementation  
-- Database modeling and persistence  
-- Secure data handling  
-- Object-Oriented architecture  
-- Separation of concerns  
+- **Business rules implementation:** Complex logic for transfers between accounts.  
+- **Database modeling:** Relational storage for users, passwords, and balances.  
+- **Register logic:** Validating unique identifiers (CPF) and creating new records.  
+- **Object-Oriented architecture:** Modular code using `Bank`, `Login`, and `Register` classes.  
 
 The UI exists **only to demonstrate and test the backend logic in a realistic environment**.
 
 ## 🌐 Deploy
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://python-bank-system-2ymuuuwsrs85wpl32blgxu.streamlit.app/)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](SUA_URL_DO_DEPLOY_AQUI)
+
 > [!CAUTION]
 > ### ⚠️ Access Credentials Required
-> To explore the features of the Live Demo, you **must** use the following pre-registered credentials (case-sensitive):
+> To explore the features of the Live Demo, you can **register your own account** or use the following pre-registered test credentials:
 >
-> - **Username:** `Vinicius` (The "V" must be uppercase)
-> - **Password:** `12345`
+> - **Username:** `Marcus`
+> - **Password:** `21345`
 
 ---
 
 ## 🚀 Key Features
 
-### 🔐 Authentication & Session Control
-- User login with username and password
-- Session-based authentication using Streamlit Session State
-- Controlled access to sensitive operations
+### 🔐 Authentication & Registration
+- **User Registration:** Dynamic account creation with CPF validation.
+- **Session Control:** Secure login and persistence using Streamlit Session State.
+- **Switch Account:** Easy logout to test transfers between different users.
 
-## 🚀 Features
+### 💰 Banking Operations
+- **Account Transfer:** Send money instantly to any user using their unique **ID Key**.
+- **Real-time Balance:** Instant visual feedback and balance updates after transactions.
+- **Visual Rewards:** Integrated animations (balloons) for successful transfers.
 
-- **User Authentication System**
-  - Secure login with username and password
-  - Session-based authentication using Streamlit Session State
-
-- **Real-time Banking Operations**
-  - 💰 Deposits and withdrawals with instant balance updates
-  - 📊 Live balance display using Streamlit metrics
-
-- **Persistent Database**
-  - All user data is stored in a local **SQLite (`Bank.db`)** database
-  - Data remains intact even after closing the application
-
-- **Interactive Web Interface**
-  - Sidebar navigation (Home, About Project, Logout)
-  - Clean layout with columns, dividers, and visual feedback
-  - Success and error alerts for every transaction
-
-- **Security-Oriented SQL**
-  - Uses **SQL parameterized queries (`?`)** to prevent SQL Injection
+### 📊 Database & Security
+- **SQLite Persistence:** All user data is stored in a local **SQLite (`bank.db`)** database.
+- **Parameterized Queries:** Protects the system against **SQL Injection** attacks.
 
 > [!NOTE]
 > This project is under **active development**.  
-> New features and security improvements are continuously being added 🚀
-
+> New features like Transaction History and Password Hashing are coming soon! 🚀
 
 ---
 
@@ -73,33 +59,33 @@ The UI exists **only to demonstrate and test the backend logic in a realistic en
 - **Database:** SQLite3  
 - **Concepts & Skills:**
   - Object-Oriented Programming (OOP)
-  - Session State Management
-  - CRUD Operations
-  - Secure SQL Queries
-  - UI Design for Web Apps
+  - CRUD Operations (Create, Read, Update, Delete)
+  - Relational Database Management
+  - State Handling in Web Apps
 
 ---
 
 ## 📸 Application Preview
 
-### **Secure Login:** A secure access point where user authentication takes place, as shown in the image below. Improvements coming soon.
-
-![Database Structure](assets/photo2.png)
+### **Register & Login:** Users can create their own accounts or use existing credentials.
+![Login Screen](assets/photo2.png)
 
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
 
-## The image below shows the main banking interface after a successful login. It features a personalized welcome message, real-time balance display, and intuitive controls for deposits and withdrawals, all powered by Streamlit's reactive components
-![Database Structure](assets/photo3.png)
+### **Main Dashboard:** Displays the current balance and provides tabs for sending money or checking your personal Key.
+![Main Dashboard](assets/photo3.png)
 
 > **Acesse a versão online para testes rápidos.**
-### 🌐 [Click here to Open the Live App](https://python-bank-system-2ymuuuwsrs85wpl32blgxu.streamlit.app/)
+### 🌐 [Click here to Open the Live App](SUA_URL_DO_DEPLOY_AQUI)
 
 ---
 
-## 📖 Quick Guide (How to Use)
+## 📖 Quick Guide (How to Test)
 1. Open the **Live App** link above.
-2. Login with user `Vinicius` and password `12345`.
-3. Use the sidebar to navigate between Home and About.
+2. Go to **Register** and create a new account (or use the test credentials).
+3. Check your **ID Key** in the 'My Key' tab.
+4. Logout and enter with another account to **Send Money** to your first account's ID.
+5. Watch the balance update in real-time!
 
 ---
 
@@ -113,7 +99,7 @@ The UI exists **only to demonstrate and test the backend logic in a realistic en
      ```
   2. **Install requirements:**
      ```bash
-     pip install -r requirements.txt
+     pip install streamlit
      ```
   3. **Run the app:**
      ```bash
@@ -121,3 +107,6 @@ The UI exists **only to demonstrate and test the backend logic in a realistic en
      ```
 
 </details>
+
+---
+### Developed with ❤️ by **Vinícius Santos-Tech**
