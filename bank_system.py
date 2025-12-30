@@ -1,108 +1,155 @@
-#MADE BY VINICIUS SANTOS-TECH❤️
-#Python Bank System
+# MADE BY VINICIUS SANTOS-TECH ❤️
+# Python Bank System
+
 import sqlite3
 import streamlit as st
-import os
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-db_path = os.path.join(BASE_DIR, "Bank.db")
-connection = sqlite3.connect(db_path, check_same_thread=False)
+from time import sleep
 
-if "page" not in st.session_state:
-    st.session_state.page = "bank"
+connection = sqlite3.connect('bank.db', check_same_thread=False)
+cursor = connection.cursor()
+cursor.execute("""CREATE TABLE IF NOT EXISTS bank_accounts(
+               id INTEGER PRIMARY KEY AUTOINCREMENT,
+               titular TEXT,
+               password TEXT,
+               cpf INTEGER UNIQUE,
+               balance FLOAT)""")
+connection.commit()
+
+class Register:
+    """Class responsible for creating new user accounts."""
+    def create_account(self, name, password, cpf, initial_balance=0.0):
+        try:
+            cursor.execute("SELECT id FROM bank_accounts WHERE cpf = ?", (cpf,))
+            if cursor.fetchone():
+                return "Error! CPF already registered."
+            
+            cursor.execute("""
+                INSERT INTO bank_accounts (titular, password, cpf, balance) 
+                VALUES (?, ?, ?, ?)
+            """, (name, password, cpf, initial_balance))
+            
+            connection.commit()
+            return "Account created successfully!"
+        except Exception as e:
+            return f"An error occurred: {e}"
+
+class Login:
+    """Class responsible for handling user authentication."""
+    def validate_credentials(self, user, password):
+        if user and password:
+            cursor.execute("SELECT titular FROM bank_accounts WHERE titular = ? AND password = ?", (user, password))
+            response = cursor.fetchone()
+            if response:
+                return response[0]
+        return None
 
 class Bank:
-    """Class responsible for handling bank database operations like balance lookup, withdrawals, and deposits."""
-    
-    def __init__(self, connection):
-        """Initializes the bank logic with a database connection and cursor."""
-        self.connection = connection
-        self.cursor = self.connection.cursor()
+    """Class representing the banking operations for a logged-in user."""
+    def __init__(self, logged_user):
+        self.user = logged_user
+        cursor.execute("SELECT balance FROM bank_accounts WHERE titular = ?", (self.user,))
+        self.balance = cursor.fetchone()[0]
 
-    def get_user_data(self, name):
-        """Retrieves the balance and CPF of a specific user by their name."""
-        self.cursor.execute("SELECT balance, cpf FROM bank_accounts WHERE titular = ?", (name,))
-        return self.cursor.fetchone()
-
-    def withdraw(self, amount, current_balance, cpf):
-        """Validates and processes a cash withdrawal, updating the database if funds are available."""
-        if amount > current_balance:
-            st.error("Insufficient funds!")
+    def send_money(self, key, quantity):
+        if quantity > self.balance:
+            return "Error! Insufficient funds"
         else:
-            new_balance = current_balance - amount
-            self.cursor.execute("UPDATE bank_accounts SET balance = ? WHERE cpf = ?", (new_balance, cpf))
-            self.connection.commit()
-            st.success(f"Withdrawal of ${amount:.2f} successful!")
-            st.rerun()
+            cursor.execute("SELECT id FROM bank_accounts WHERE id = ?", (key,))
+            if cursor.fetchone() is None:
+                return "Error! Key not found"
+            else:
+                cursor.execute("UPDATE bank_accounts SET balance = balance - ? WHERE titular = ?", (quantity, self.user))
+                cursor.execute("UPDATE bank_accounts SET balance = balance + ? WHERE id = ?", (quantity, key))
+                connection.commit()
+                self.balance -= quantity
+                return "Money sent successfully!"
 
-    def deposit(self, amount, current_balance, cpf):
-        """Processes a cash deposit and updates the user's balance in the database."""
-        new_balance = current_balance + amount
-        self.cursor.execute("UPDATE bank_accounts SET balance = ? WHERE cpf = ?", (new_balance, cpf))
-        self.connection.commit()
-        st.success(f"Deposit of ${amount:.2f} successful!")
-        st.rerun()
+st.set_page_config(page_title="My Python Bank")
 
-class BankApp:
-    """Class responsible for rendering the Streamlit user interface and managing navigation."""
-    
-    def __init__(self):
-        """Initializes the app interface and connects it to the Bank logic."""
-        self.logic = Bank(connection)
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+if "page" not in st.session_state:
+    st.session_state.page = "bank"
+if "register_mode" not in st.session_state:
+    st.session_state.register_mode = False
 
-    def login_screen(self):
-        """Renders the login form and validates user credentials against the database."""
-        st.title("🏦 Vinícius Tech Bank")
-        name = st.text_input("Username")
-        password = st.text_input("Password", type="password")
-        if st.button("Login"):
-            self.logic.cursor.execute("SELECT titular FROM bank_accounts WHERE titular = ? AND senha = ?", (name, password))
-            if self.logic.cursor.fetchone():
-                st.session_state.logged_in = True
-                st.session_state.username = name
+if not st.session_state.logged_in:
+    if st.session_state.register_mode:
+        st.title("📝 Register New Account")
+        new_user = st.text_input("Full Name")
+        new_pass = st.text_input("Choose a Password", type="password")
+        new_cpf = st.number_input("CPF (Numbers only)", step=1, value=0)
+        
+        if st.button("Confirm Registration"):
+            reg = Register()
+            msg = reg.create_account(new_user, new_pass, new_cpf, initial_balance=100.0)
+            if "successfully" in msg:
+                st.success(msg)
+                sleep(1)
+                st.session_state.register_mode = False
                 st.rerun()
             else:
-                st.error("Invalid credentials")
-
-    def main_screen(self):
-        """Renders the main dashboard, including navigation sidebar, balance display, and transaction forms."""
-        # Sidebar Buttons
-        if st.sidebar.button("Home"):
-            st.session_state.page = "bank"
-            st.rerun()
-        if st.sidebar.button("About Project"):
-            st.session_state.page = "about"
-            st.rerun()
-        if st.sidebar.button("Logout"):
-            st.session_state.logged_in = False
-            st.rerun()
-
-        if st.session_state.page == "bank":
-            username = st.session_state.username
-            data = self.logic.get_user_data(username)
-            if data:
-                balance, cpf = data
-                st.title(f"Welcome back, {username}!")
-                st.metric("Current Balance", f"$ {balance:.2f}")
-                st.divider()
-                
-                col1, col2 = st.columns(2)
-                with col1:
-                    w_amount = st.number_input("Withdraw amount:", min_value=0.0, key="w")
-                    if st.button("Confirm Withdrawal"):
-                        self.logic.withdraw(w_amount, balance, cpf)
-                with col2:
-                    d_amount = st.number_input("Deposit amount:", min_value=0.0, key="d")
-                    if st.button("Confirm Deposit"):
-                        self.logic.deposit(d_amount, balance, cpf)
+                st.error(msg)
         
-        elif st.session_state.page == "about":
-            st.title("📖 About the Project")
-            st.header("This project was developed by Vinícius Santos-Tech.")
-            st.write('''This is a **study project** focused on mastering Python, SQLite, and Streamlit. 
+        if st.button("Already have an account? Login"):
+            st.session_state.register_mode = False
+            st.rerun()
+    
+    else:
+        st.title("🏦 Banking Login")
+        user_input = st.text_input("Username")
+        pass_input = st.text_input("Password", type="password")
+        
+        if st.button("Login"):
+            app_login = Login()
+            result = app_login.validate_credentials(user_input, pass_input)
+            if result:
+                st.session_state.user = result
+                st.session_state.logged_in = True
+                st.rerun()
+            else:
+                st.error("Invalid username or password")
+        
+        if st.button("Don't have an account? Sign up"):
+            st.session_state.register_mode = True
+            st.rerun()
+
+else:
+    app_bank = Bank(st.session_state.user)
+    with st.expander("🛠️ TEST INSTRUMENTS (Read this to test)"):
+        st.write("""
+        To visualize how the system works and see the balance changing:
+        
+        1. **Option A (Quick Test):** Logout and login with the test user:
+           - **Username:** `Marcus`
+           - **Password:** `21345`
+           - Use the 'Send Money' tab to send an amount to your own ID.
+           
+        2. **Option B (Recommended):** Use the **Register** screen to create a second account. 
+           This way, you can simulate a real transfer between two users created by you!
+        
+        *Don't forget to check your ID in the 'My Key' tab before switching accounts!*
+        """)
+
+    st.sidebar.title(f"Welcome, {app_bank.user}!")
+    if st.sidebar.button("Home"):
+        st.session_state.page = "bank"
+        st.rerun()
+    if st.sidebar.button("About"):
+        st.session_state.page = "about"
+        st.rerun()
+    if st.sidebar.button("Logout"):
+        st.session_state.logged_in = False
+        st.rerun()
+
+    if st.session_state.page == "about":
+        st.title("About the Project")
+        st.header("This project was developed by Vinícius Santos-Tech.")
+        st.write('''This is a **study project** focused on mastering Python, SQLite, and Streamlit. 
                 I am currently working hard on it to implement new features and improve the code structure.''')
-            st.divider()
-            st.markdown("<img src='https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif' width='100%'>", unsafe_allow_html=True)
-            st.markdown("""
+        st.divider()
+        st.markdown("<img src='https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif' width='100%'>", unsafe_allow_html=True)
+        st.markdown("""
             ### 🔵 Project Purpose
             This application is a **full-stack study project** developed to bridge the gap between 
             theoretical Python concepts and real-world implementation. The goal was to build a 
@@ -126,26 +173,32 @@ class BankApp:
             - Implementing **CRUD operations** (Create, Read, Update, Delete) via SQL.
             - Designing a clean **User Interface (UI)** with real-time feedback and animations.""")
                         
-            st.markdown("<img src='https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif' width='100%'>", unsafe_allow_html=True)
-            
-            st.markdown("""### 📅 What's Coming Next? (Roadmap)
-            I believe that a project is never truly finished. My next steps are:
-            1. **Transaction Logs:** A full history of every cent that moves in the account.
-            2. **Password Hashing:** Adding a layer of professional security to the database.
-            3. **Account Transfers:** Enabling users to send money to each other.""")
-            st.subheader("🛠️ Current Goals")
-            st.write("- [x] User Login System")
-            st.write("- [x] Database Integration (SQLite)")
-            st.write("- [ ] Transaction History (Coming Soon)")
-            st.write("- [ ] Enhanced Security (Password Hashing)")
-            st.success("Developed with ❤️ by **Vinícius Santos-Tech**")
+        st.markdown("<img src='https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif' width='100%'>", unsafe_allow_html=True)
+        st.subheader("🛠️ Current Goals")
+        st.write("- [x] User Login System")
+        st.write("- [x] Database Integration (SQLite)")
+        st.write("- [ ] Transaction History (Coming Soon)")
+        st.write("- [ ] Enhanced Security (Password Hashing)")
+        st.success("Developed with ❤️ by **Vinícius Santos-Tech**")
+    
+    else:
+        st.title(f"Current Balance: $ {app_bank.balance:.2f}")
+        tab1, tab2 = st.tabs(["Send Money", "My Key"])
 
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
+        with tab1:
+            dest_key = st.number_input("Recipient ID (Key)", step=1)
+            send_value = st.number_input("Amount to send", min_value=0.0)
+            if st.button("Confirm Transfer"):
+                msg = app_bank.send_money(dest_key, send_value)
+                if "success" in msg.lower():
+                    st.success(msg)
+                    st.balloons()
+                    sleep(1)
+                    st.rerun()
+                else:
+                    st.error(msg)
 
-app = BankApp()
-
-if st.session_state.logged_in:
-    app.main_screen()
-else:
-    app.login_screen()
+        with tab2:
+            cursor.execute("SELECT id FROM bank_accounts WHERE titular = ?", (app_bank.user,))
+            my_id = cursor.fetchone()[0]
+            st.info(f"Your key to receive deposits is: {my_id}")
