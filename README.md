@@ -19,7 +19,7 @@ Although the application includes a web interface built with **Streamlit**, the 
 The UI exists **only to demonstrate and test the backend logic in a realistic environment**.
 
 ## 🌐 Deploy
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](SUA_URL_DO_DEPLOY_AQUI)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://python-bank-system-2ymuuuwsrs85wpl32blgxu.streamlit.app/)
 
 > [!CAUTION]
 > ### ⚠️ Access Credentials Required
@@ -76,7 +76,7 @@ The UI exists **only to demonstrate and test the backend logic in a realistic en
 ![Main Dashboard](assets/photo3.png)
 
 > **Acesse a versão online para testes rápidos.**
-### 🌐 [Click here to Open the Live App](SUA_URL_DO_DEPLOY_AQUI)
+### 🌐 [Click here to Open the Live App](https://python-bank-system-2ymuuuwsrs85wpl32blgxu.streamlit.app/)
 
 ---
 
@@ -95,7 +95,7 @@ The UI exists **only to demonstrate and test the backend logic in a realistic en
 
   1. **Clone the repo:**
      ```bash
-     git clone [https://github.com/SeuUsuario/python-bank-system.git](https://github.com/SeuUsuario/python-bank-system.git)
+     git clone [https://github.com/ViniciusSantos-Tech/python-bank-system.git](https://github.com/ViniciusSantos-Tech/python-bank-system.git)
      ```
   2. **Install requirements:**
      ```bash
