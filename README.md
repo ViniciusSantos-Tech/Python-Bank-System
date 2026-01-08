@@ -1,95 +1,76 @@
-# $${\color{blue}\text{🏦 Python Bank System}}$$
-### A modern, interactive, and secure **web banking application** built with Python, SQLite, and Streamlit.  
-This project showcases the evolution from a simple CLI system to a **full interactive web interface**, focusing on **OOP**, **database persistence**, and **state management**.
+# $${\color{blue}\text{🏦 Python Banking API}}$$
+### A high-performance, secure, and professional **Banking REST API** built with FastAPI, SQLite, and SHA-256 Hashing.
+
+This project represents a major evolution in backend engineering, moving from simple scripts to a structured **API architecture** focused on **security**, **scalability**, and **data integrity**.
 
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
 
+> [!CAUTION]
+> ### ⚠️ Project Under Active Development
+> This system receives frequent updates (typically every 3 days or less). Any unexpected behavior or incomplete information is due to this continuous process of improvement, refactoring, and security enhancement.
 ---
+
 ## 🧠 Project Overview
 
-The project is a study-driven yet professional-grade project designed to simulate the **core backend logic of a real banking system**.
+The **Python Banking API** is a robust backend system designed to handle core financial operations. It features a clean separation between the database layer and the application routes, ensuring modularity and easy maintenance.
 
-Although the application includes a web interface built with **Streamlit**, the **main focus of this project is backend engineering**, including:
-
-- **Business rules implementation:** Complex logic for transfers between accounts.  
-- **Database modeling:** Relational storage for users, passwords, and balances.  
-- **Register logic:** Validating unique identifiers (CPF) and creating new records.  
-- **Object-Oriented architecture:** Modular code using `Bank`, `Login`, and `Register` classes.  
-
-The UI exists **only to demonstrate and test the backend logic in a realistic environment**.
-
-## 🌐 Deploy
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://python-bank-system-2ymuuuwsrs85wpl32blgxu.streamlit.app/)
-
-> [!CAUTION]
-> ### ⚠️ Access Credentials Required
-> To explore the features of the Live Demo, you can **register your own account** or use the following pre-registered test credentials:
->
-> - **Username:** `Marcus`
-> - **Password:** `21345`
+### 🎯 Key Engineering Focus:
+- **Security First:** Implementation of manual SHA-256 hashing for sensitive data.
+- **RESTful Architecture:** Clear endpoints for full CRUD operations.
+- **Relational Integrity:** Automated handling of transaction history and account relationships.
+- **Validation:** Strict data typing using Pydantic models.
 
 ---
 
-## 🚀 Key Features
+## 🚀 Main Features
 
-### 🔐 Authentication & Registration
-- **User Registration:** Dynamic account creation with CPF validation.
-- **Session Control:** Secure login and persistence using Streamlit Session State.
-- **Switch Account:** Easy logout to test transfers between different users.
+### 🔐 Advanced Security
+- **SHA-256 Password Hashing:** User passwords are encrypted before storage. No plain-text passwords ever touch the database.
+- **CPF Uniqueness:** Native SQLite constraints to prevent duplicate identity records.
+- **Protected Endpoints:** Validation of credentials for sensitive operations like account deletion.
 
-### 💰 Banking Operations
-- **Account Transfer:** Send money instantly to any user using their unique **ID Key**.
-- **Real-time Balance:** Instant visual feedback and balance updates after transactions.
-- **Visual Rewards:** Integrated animations (balloons) for successful transfers.
+### 💰 Financial Engine
+- **Transactional Transfers:** Atomic logic to ensure money is debited from one account and credited to another simultaneously.
+- **Double-Check Validation:** The system verifies recipient existence and sender balance before any transfer.
+- **Dynamic History:** Automatic logging of every transaction with timestamps and quantity tracking.
 
-### 📊 Database & Security
-- **SQLite Persistence:** All user data is stored in a local **SQLite (`bank.db`)** database.
-- **Parameterized Queries:** Protects the system against **SQL Injection** attacks.
-
-> [!NOTE]
-> This project is under **active development**.  
-> New features like Transaction History and Password Hashing are coming soon! 🚀
+### 🛠️ Data Management
+- **Persistence:** Full SQLite integration for permanent data storage.
+- **Relational Cleanup:** Smart deletion logic that clears a user's history when an account is closed to prevent database bloating.
 
 ---
 
 ## 🛠️ Technologies Used
 
-- **Language:** Python 3.x  
-- **Web Framework:** Streamlit  
-- **Database:** SQLite3  
-- **Concepts & Skills:**
-  - Object-Oriented Programming (OOP)
-  - CRUD Operations (Create, Read, Update, Delete)
-  - Relational Database Management
-  - State Handling in Web Apps
+- **Framework:** [FastAPI](https://fastapi.tiangolo.com/) (High performance)
+- **Language:** Python 3.13+
+- **Database:** SQLite3
+- **Data Validation:** Pydantic
+- **Security:** Hashlib (SHA-256)
+- **Documentation:** Swagger UI (Auto-generated)
 
 ---
 
-## 📸 Application Preview
+## 📸 API Preview
 
-### **Register & Login:** Users can create their own accounts or use existing credentials.
+### **Documentation & Testing:** The API features an auto-generated Swagger interface for real-time testing of all endpoints.
 ![Login Screen](assets/photo2.png)
 
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
 
-### **Main Dashboard:** Displays the current balance and provides tabs for sending money or checking your personal Key.
-![Main Dashboard](assets/photo3.png)
+---
 
-> **Acesse a versão online para testes rápidos.**
-### 🌐 [Click here to Open the Live App](https://python-bank-system-2ymuuuwsrs85wpl32blgxu.streamlit.app/)
+## 📖 Quick Guide (How to Use)
+
+1. **Register:** Send a `POST` request to `/Register` with name, password, and CPF.
+2. **Login:** Validate your credentials at `/Login`.
+3. **Send Money:** Use the `/Send` endpoint to transfer values using account IDs.
+4. **Audit:** Check the `/History/{id_user}` to see all movements for a specific account.
 
 ---
 
-## 📖 Quick Guide (How to Test)
-1. Open the **Live App** link above.
-2. Go to **Register** and create a new account (or use the test credentials).
-3. Check your **ID Key** in the 'My Key' tab.
-4. Logout and enter with another account to **Send Money** to your first account's ID.
-5. Watch the balance update in real-time!
+## 🛠️ Local Setup (For Developers)
 
----
-
-## 🛠️ Local Setup (For Developers only)
 <details>
   <summary>Click to see how to run this project on your machine</summary>
 
@@ -99,12 +80,14 @@ The UI exists **only to demonstrate and test the backend logic in a realistic en
      ```
   2. **Install requirements:**
      ```bash
-     pip install streamlit
+     pip install fastapi uvicorn
      ```
-  3. **Run the app:**
+  3. **Run the API:**
      ```bash
-     streamlit run bank_system.py
+     uvicorn main:app --reload
      ```
+  4. **Access Documentation:**
+     Open `http://127.0.0.1:8000/docs` in your browser.
 
 </details>
 
