@@ -11,7 +11,7 @@ This project represents a major evolution in backend engineering, moving from si
 
 ---
 
-## 🧠 Project Overview
+##  Project Overview
 
 The **Python Banking API** is a robust backend system designed for complex financial operations. It utilizes an **ORM (Object-Relational Mapping)** approach to ensure that business logic and database management are decoupled, following the best practices of modern software development.
 
@@ -25,7 +25,7 @@ The **Python Banking API** is a robust backend system designed for complex finan
 
 ## 🟦 Main Features
 
-### 🔐 Advanced Security & Integrity
+###  Advanced Security & Integrity
 - **SHA-256 Hashing:** Strong encryption for credentials using `hashlib`.
 - **Relational Constraints:** Foreign Keys and Unique constraints managed by the database engine.
 - **Transactional Safety:** Full ACID compliance for money transfers using SQLAlchemy sessions.
@@ -79,7 +79,7 @@ The **Python Banking API** is a robust backend system designed for complex finan
 
   1. **Clone the repo:**
      ```bash
-     git clone [https://github.com/ViniciusSantos-Tech/python-bank-system.git](https://github.com/ViniciusSantos-Tech/python-bank-system.git)
+     git clone [https://github.com/ViniciusSantos-Tech/Python-bank-system.git](https://github.com/ViniciusSantos-Tech/Python-bank-system.git)
      ```
   2. **Install requirements:**
      ```bash
@@ -96,5 +96,7 @@ The **Python Banking API** is a robust backend system designed for complex finan
      Open `http://127.0.0.1:8000/docs` in your browser.
 
 </details>
----
+
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
+
 ### Developed with ❤️ by **Vinícius Santos-Tech**
