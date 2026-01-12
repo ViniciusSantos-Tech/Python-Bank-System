@@ -1,71 +1,74 @@
-# $${\color{blue}\text{🏦 Python Banking API}}$$
-### A high-performance, secure, and professional **Banking REST API** built with FastAPI, SQLite, and SHA-256 Hashing.
+# $${\color{blue}\text{🏦 Python Banking API - Enterprise Grade}}$$
+### A high-performance, secure, and professional **Banking REST API** built with FastAPI, PostgreSQL, and SQLAlchemy ORM.
 
-This project represents a major evolution in backend engineering, moving from simple scripts to a structured **API architecture** focused on **security**, **scalability**, and **data integrity**.
+This project represents a major evolution in backend engineering, moving from simple scripts to a structured **Enterprise Architecture** focused on **Financial Precision**, **Relational Schemas**, and **Scalability**.
 
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
 
 > [!CAUTION]
 > ### ⚠️ Project Under Active Development
 > This system receives frequent updates (typically every 3 days or less). Any unexpected behavior or incomplete information is due to this continuous process of improvement, refactoring, and security enhancement.
+
 ---
 
 ## 🧠 Project Overview
 
-The **Python Banking API** is a robust backend system designed to handle core financial operations. It features a clean separation between the database layer and the application routes, ensuring modularity and easy maintenance.
+The **Python Banking API** is a robust backend system designed for complex financial operations. It utilizes an **ORM (Object-Relational Mapping)** approach to ensure that business logic and database management are decoupled, following the best practices of modern software development.
 
-### 🎯 Key Engineering Focus:
-- **Security First:** Implementation of manual SHA-256 hashing for sensitive data.
-- **RESTful Architecture:** Clear endpoints for full CRUD operations.
-- **Relational Integrity:** Automated handling of transaction history and account relationships.
-- **Validation:** Strict data typing using Pydantic models.
+### 🟦 Key Engineering Focus:
+- **Financial Precision:** Implementation of `Numeric(10, 2)` types to eliminate floating-point rounding errors.
+- **ORM Integration:** Powered by **SQLAlchemy** for advanced database abstraction and security.
+- **Relational Schemas:** Data is organized within custom PostgreSQL schemas (`Bank`) for better isolation.
+- **Self-Documented:** Fully documented using Python **Docstrings** (Google Style) and Swagger UI.
 
 ---
 
-## 🚀 Main Features
+## 🟦 Main Features
 
-### 🔐 Advanced Security
-- **SHA-256 Password Hashing:** User passwords are encrypted before storage. No plain-text passwords ever touch the database.
-- **CPF Uniqueness:** Native SQLite constraints to prevent duplicate identity records.
-- **Protected Endpoints:** Validation of credentials for sensitive operations like account deletion.
+### 🔐 Advanced Security & Integrity
+- **SHA-256 Hashing:** Strong encryption for credentials using `hashlib`.
+- **Relational Constraints:** Foreign Keys and Unique constraints managed by the database engine.
+- **Transactional Safety:** Full ACID compliance for money transfers using SQLAlchemy sessions.
 
-### 💰 Financial Engine
-- **Transactional Transfers:** Atomic logic to ensure money is debited from one account and credited to another simultaneously.
-- **Double-Check Validation:** The system verifies recipient existence and sender balance before any transfer.
-- **Dynamic History:** Automatic logging of every transaction with timestamps and quantity tracking.
+### 💰 Professional Financial Engine
+- **Decimal-Based Calculations:** Precise fund management using the `Decimal` library to avoid cent loss.
+- **Automated Transactions:** Every movement creates a detailed record in the `Transactions` table.
+- **Schema Isolation:** Optimized table organization within the PostgreSQL environment.
 
-### 🛠️ Data Management
-- **Persistence:** Full SQLite integration for permanent data storage.
-- **Relational Cleanup:** Smart deletion logic that clears a user's history when an account is closed to prevent database bloating.
+### 🛠️ Professional Documentation
+- **Swagger UI Integration:** Interactive API documentation available at the `/docs` endpoint.
+- **Docstrings:** High-level code explanation directly in the source files.
 
 ---
 
 ## 🛠️ Technologies Used
 
-- **Framework:** [FastAPI](https://fastapi.tiangolo.com/) (High performance)
+- **Framework:** [FastAPI](https://fastapi.tiangolo.com/)
+- **ORM:** [SQLAlchemy](https://www.sqlalchemy.org/)
 - **Language:** Python 3.13+
-- **Database:** SQLite3
+- **Database:** PostgreSQL (Professional Grade)
+- **Database Driver:** Psycopg2
 - **Data Validation:** Pydantic
 - **Security:** Hashlib (SHA-256)
-- **Documentation:** Swagger UI (Auto-generated)
 
 ---
 
 ## 📸 API Preview
 
-### **Documentation & Testing:** The API features an auto-generated Swagger interface for real-time testing of all endpoints.
-![Login Screen](assets/photo2.png)
+### **Documentation & Testing:** Real-time testing of all endpoints via auto-generated Swagger interface.
+![API Preview](assets/photo2.png)
 
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
 
 ---
 
-## 📖 Quick Guide (How to Use)
+## 📖 Quick Guide (Endpoints)
 
-1. **Register:** Send a `POST` request to `/Register` with name, password, and CPF.
-2. **Login:** Validate your credentials at `/Login`.
-3. **Send Money:** Use the `/Send` endpoint to transfer values using account IDs.
-4. **Audit:** Check the `/History/{id_user}` to see all movements for a specific account.
+1. **`POST /accounts`**: Create a new account with hashed credentials.
+2. **`POST /login`**: Secure authentication and identity verification.
+3. **`POST /transactions`**: Precise money transfer between validated accounts.
+4. **`GET /History/{user_id}`**: Complete audit trail of financial movements.
+5. **`DELETE /Delete/{user_id}`**: Secure account termination with cascade history cleanup.
 
 ---
 
@@ -80,16 +83,18 @@ The **Python Banking API** is a robust backend system designed to handle core fi
      ```
   2. **Install requirements:**
      ```bash
-     pip install fastapi uvicorn
+     pip install -r requirements.txt
      ```
-  3. **Run the API:**
+  3. **Setup Database:**
+     Ensure you have a PostgreSQL instance running and update the `URL_BANK` in `database.py`.
+     
+  4. **Run the API:**
      ```bash
      uvicorn main:app --reload
      ```
-  4. **Access Documentation:**
+  5. **Access Documentation:**
      Open `http://127.0.0.1:8000/docs` in your browser.
 
 </details>
-
 ---
 ### Developed with ❤️ by **Vinícius Santos-Tech**
