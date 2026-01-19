@@ -1,7 +1,7 @@
-# $${\color{blue}\text{🏦 Python Banking API - Enterprise Grade}}$$
-### A high-performance, secure, and professional **Banking REST API** built with FastAPI, PostgreSQL, and SQLAlchemy ORM.
+# $${\color{blue}\text{🏦 Secure Bank API}}$$
+### A high-performance, professional **Banking REST API** featuring JWT Authentication, Environment Security, and SQLAlchemy ORM.
 
-This project represents a major evolution in backend engineering, moving from simple scripts to a structured **Enterprise Architecture** focused on **Financial Precision**, **Relational Schemas**, and **Scalability**.
+This project represents a major evolution in backend engineering, implementing **Industry-Standard Security Protocols** and a structured **Enterprise Architecture** focused on data protection and scalability.
 
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
 
@@ -11,45 +11,47 @@ This project represents a major evolution in backend engineering, moving from si
 
 ---
 
-##  Project Overview
+## 🟦 Project Overview
 
-The **Python Banking API** is a robust backend system designed for complex financial operations. It utilizes an **ORM (Object-Relational Mapping)** approach to ensure that business logic and database management are decoupled, following the best practices of modern software development.
+The **project** is a robust backend system designed for secure financial operations. It utilizes **JWT (JSON Web Tokens)** for stateless authentication and **Bcrypt** for password hashing, ensuring that user data and transactions remain protected against unauthorized access.
 
 ### 🟦 Key Engineering Focus:
-- **Financial Precision:** Implementation of `Numeric(10, 2)` types to eliminate floating-point rounding errors.
+- **JWT Authentication:** Secure identity verification using Bearer Tokens for sensitive operations.
+- **Environment Security:** Protection of sensitive credentials (Keys and Database URLs) via `.env` files.
+- **Identity Locking:** Security logic that prevents users from performing operations (like transfers or history checks) on accounts they do not own.
 - **ORM Integration:** Powered by **SQLAlchemy** for advanced database abstraction and security.
-- **Relational Schemas:** Data is organized within custom PostgreSQL schemas (`Bank`) for better isolation.
-- **Self-Documented:** Fully documented using Python **Docstrings** (Google Style) and Swagger UI.
+- **Financial Precision:** Implementation of `Numeric(10, 2)` types to eliminate floating-point rounding errors.
 
 ---
 
 ## 🟦 Main Features
 
-###  Advanced Security & Integrity
-- **SHA-256 Hashing:** Strong encryption for credentials using `hashlib`.
-- **Relational Constraints:** Foreign Keys and Unique constraints managed by the database engine.
-- **Transactional Safety:** Full ACID compliance for money transfers using SQLAlchemy sessions.
+### 🔐 Advanced Security & Auth
+- **JWT Tokens:** Implementation of `python-jose` for generating and validating secure access tokens.
+- **Bcrypt Hashing:** Password protection using salt-based hashing to prevent rainbow table attacks.
+- **Secure Routes:** Protection of endpoints via Header Token verification and Payload decoding.
+- **Environment Protection:** Implementation of `python-dotenv` to keep secrets out of version control.
 
 ### 💰 Professional Financial Engine
+- **Transactional Safety:** Full ACID compliance for money transfers using SQLAlchemy sessions.
 - **Decimal-Based Calculations:** Precise fund management using the `Decimal` library to avoid cent loss.
-- **Automated Transactions:** Every movement creates a detailed record in the `Transactions` table.
-- **Schema Isolation:** Optimized table organization within the PostgreSQL environment.
+- **Audit Trail:** Automated transaction logs for every movement between accounts.
 
 ### 🛠️ Professional Documentation
 - **Swagger UI Integration:** Interactive API documentation available at the `/docs` endpoint.
-- **Docstrings:** High-level code explanation directly in the source files.
+- **Google Style Docstrings:** High-level code explanation directly in the source files.
 
 ---
 
 ## 🛠️ Technologies Used
 
 - **Framework:** [FastAPI](https://fastapi.tiangolo.com/)
+- **Authentication:** JWT (JSON Web Tokens)
+- **Security:** Bcrypt (Passlib) & python-jose
 - **ORM:** [SQLAlchemy](https://www.sqlalchemy.org/)
 - **Language:** Python 3.13+
-- **Database:** PostgreSQL (Professional Grade)
-- **Database Driver:** Psycopg2
+- **Environment Management:** Python-dotenv
 - **Data Validation:** Pydantic
-- **Security:** Hashlib (SHA-256)
 
 ---
 
@@ -64,11 +66,11 @@ The **Python Banking API** is a robust backend system designed for complex finan
 
 ## 📖 Quick Guide (Endpoints)
 
-1. **`POST /accounts`**: Create a new account with hashed credentials.
-2. **`POST /login`**: Secure authentication and identity verification.
-3. **`POST /transactions`**: Precise money transfer between validated accounts.
-4. **`GET /History/{user_id}`**: Complete audit trail of financial movements.
-5. **`DELETE /Delete/{user_id}`**: Secure account termination with cascade history cleanup.
+1. **`POST /accounts`**: Register a new account.
+2. **`POST /login`**: Authenticate and receive an **Access Token**.
+3. **`POST /transactions`**: Transfer funds (Requires valid Token & matching Sender ID).
+4. **`GET /History/{user_id}`**: Retrieve transaction history (Requires valid Token).
+5. **`DELETE /Delete/{user_id}`**: Secure account termination with credential verification.
 
 ---
 
@@ -85,8 +87,9 @@ The **Python Banking API** is a robust backend system designed for complex finan
      ```bash
      pip install -r requirements.txt
      ```
-  3. **Setup Database:**
-     Ensure you have a PostgreSQL instance running and update the `URL_BANK` in `database.py`.
+  3. **Setup Environment Variables:**
+     - Copy `.env.example` to a new file named `.env`.
+     - Fill in your `SECRET_KEY` and `DATABASE_URL`.
      
   4. **Run the API:**
      ```bash
