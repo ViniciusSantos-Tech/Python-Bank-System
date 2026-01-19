@@ -5,6 +5,7 @@ from decimal import Decimal
 class Crud():
     def __init__(self):
         self.db = session
+
     def generate_hash(self, password):
         """
         Hashes a raw password string using the SHA-256 algorithm.
@@ -14,15 +15,6 @@ class Crud():
     def create_account(self, user, cpf, password):
         """
         Creates a new bank account if the CPF is not already registered.
-
-        Args:
-            user (str): The owner's name.
-            cpf (str): Unique Brazilian tax ID.
-            password (str): Plain text password to be hashed and stored.
-
-        Returns:
-            tuple: (True, account_id) if created, (False, None) if user exists, 
-                or a dict with Error if an exception occurs.
         """
         try:
             security_password = self.generate_hash(password)
@@ -37,29 +29,18 @@ class Crud():
         except Exception as e:
             return {"Error": e}
         return True, new_account.id
+
     def login(self, password, cpf):
         """
         Authenticates a user by checking CPF and hashed password.
-        Args:
-            password (str): Plain-text password to verify.
-            cpf (str): User's CPF.
-        Returns:
-            bool: True if credentials match, False otherwise.
         """
         security_password = self.generate_hash(password)
         exists_user = self.db.query(Account).filter_by(password=security_password, cpf=cpf).first()
         if exists_user:
-            return True
-        else:
-            return False
+            return exists_user
     def send_money(self, from_id, to_id, value):
         '''
         Function to transfer funds between two accounts
-        
-        :param from_id: ID of the account sending the money.
-        :param to_id: ID of the person who will receive the money.
-        :param value: the amount that will be transacted through the accounts
-
         '''
         try:
             From = self.db.query(Account).filter_by(id=from_id).first()
@@ -81,12 +62,6 @@ class Crud():
     def delete(self, user, password, id):
         """
         Deletes an account and its transaction history after verifying credentials.
-        Args:
-            user (str): Username for verification.
-            password (str): Password for verification.
-            id (int): ID of the account to be deleted.
-        Returns:
-            bool: True if deletion was successful, False otherwise.
         """
         security_password = self.generate_hash(password)
         account = self.db.query(Account).filter_by(user=user, password=security_password, id=id).first()
@@ -98,14 +73,10 @@ class Crud():
                 return True
             except Exception as e:
                 self.db.rollback()
-                print(f"Erro ao deletar: {e}")
+                print(f"Error: {e}")
             return False
         return False
-
         
     def get_history(self, user_id):
         '''Fetches all transaction records associated with a specific user ID.'''
         return self.db.query(Transactions).filter_by(account_id=user_id).all()
-
-            
-
