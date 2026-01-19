@@ -1,102 +1,110 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel, Field
-from database import Account
-from datetime import date
 from crud import Crud
+from auth import gerar_token, SECRET_KEY, ALGORITHM
+from jose import jwt
 
 db = Crud()
 
-app = FastAPI()
+app = FastAPI(
+    title="Elite Secure Bank API",
+    description="A secure banking API with JWT authentication and transaction protection.",
+    version="1.1.0"
+)
 class Initial(BaseModel):
     """Schema for new user registration."""
     name: str
     password: str
     cpf: str
-
-@app.post("/accounts")
-def register_user(user: Initial):
-    """
-    Register a new user account in the Bank Table.
-    
-    Returns:
-        dict: The registered username and the newly generated unique ID.
-    Raises:
-        HTTPException: 400 if the user (CPF) already exists.
-    """
-   
-    mgs, new_id = db.create_account(user.name, user.cpf, user.password)
-    if mgs == False:
-        raise HTTPException(status_code=400, detail="Existing user")
-    else:
-        return {"Name": user.name, "Id": new_id }
-    
 class Login(BaseModel):
     """Schema for user authentication credentials."""
     password: str = Field(min_length=5, max_length=10)
     cpf: str = Field(min_length=11, max_length=14)
-@app.post("/login")
-def login_user(user: Login):
-    """
-    Authenticate a user and grant access.
-    
-    Returns:
-        dict: Status login successfully if credentials are valid.
-    Raises:
-        HTTPException: 401 if credentials do not match any record.
-    """
-    response = db.login( user.password, user.cpf )
-    if response == False:
-        raise HTTPException(status_code=401, detail="Usuario ou senha invalidos")
-    else:
-        return {"Status": "login successfully"}
-    
 class SendMoney(BaseModel):
     """Schema for transferring funds between accounts."""
     from_id: int
     to_id: int
     quantity: float
-@app.post("/transactions")
-def Send(user: SendMoney):
-    """
-    Transfer money from one account to another.
-    Returns:
-        dict: Status 200 on successful transfer.
-    Raises:
-        HTTPException: 400 if the sender has insufficient balance.
-    """
-    response = db.send_money(user.from_id, user.to_id, user.quantity)
-    if response:
-        return {"Status": 200}
-    raise HTTPException(status_code=400, detail="Saldo insuficente")
 
 class ConfirmDelete(BaseModel):
     """Schema for identity verification before account deletion."""
     user: str
     password: str
-@app.delete("/Delete/{user_id}")
-def Delet_account(user: ConfirmDelete, user_id: int):
+@app.post("/accounts", tags=["Auth"])
+def register_user(user: Initial):
     """
-    Permanently delete a user account after verification.
-    
-    Args:
-        user_id (int): The ID of the account to be deleted.
-    Returns:
-        dict: Account deleted successfully
+    Register a new user account in the system.
+    Returns the registered name and unique ID.
     """
-    sucess = db.delete(user.user, user.password, user_id)
-    if not sucess:
-        raise HTTPException(status_code=401, detail="Invalid credentials or account not found")
-    return {'Status': 'Account deleted successfully'}
+    mgs, new_id = db.create_account(user.name, user.cpf, user.password)
+    if mgs == False:
+        raise HTTPException(status_code=400, detail="User with this CPF already exists.")
+    return {"Name": user.name, "Id": new_id}
 
-@app.get("/History/{user_id}")
-def history(user_id: int):
+@app.post("/login", tags=["Auth"])
+def login_user(user: Login):
     """
-    Retrieve the complete transaction history for a specific user.
-    
-    Returns:
-        list: A list of transactions or a message if none are found.
+    Authenticate user and return a JWT Access Token.
+    The token is required for all sensitive operations.
     """
+    user_db = db.login(user.password, user.cpf)
+    if not user_db:
+        raise HTTPException(status_code=401, detail="Invalid credentials.")
+    token = gerar_token(user_db.id)
+    return {"access_token": token, "token_type": "bearer"}
+
+@app.post("/transactions", tags=["Banking"])
+def send_money_route(user: SendMoney, token: str = Header(None)):
+    """
+    Transfer funds between accounts. 
+    Requires a valid token matching the sender's ID (from_id).
+    """
+    if not token:
+        raise HTTPException(status_code=401, detail="Missing authentication token.")
+
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        tokenid = payload.get("user_id")
+    except Exception:
+        raise HTTPException(status_code=401, detail="Token is invalid or expired.")
+
+    if tokenid != user.from_id:
+        raise HTTPException(status_code=403, detail="Forbidden: You cannot transfer from another user's ID.")
+
+    success = db.send_money(user.from_id, user.to_id, user.quantity)
+    if not success:
+        raise HTTPException(status_code=400, detail="Transaction failed: Insufficient balance or invalid destination.")
+    return {"status": "success", "message": "Transfer completed."}
+
+@app.get("/History/{user_id}", tags=["Banking"])
+def history(user_id: int, token: str = Header(None)):
+    """
+    Retrieve transaction history for a specific account.
+    Requires a valid token matching the requested user_id.
+    """
+    if not token:
+        raise HTTPException(status_code=401, detail="Authentication token required.")
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        tokenid = payload.get("user_id")
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid token.")
+
+    if tokenid != user_id:
+        raise HTTPException(status_code=403, detail="Forbidden: Access denied to other user's history.")
+
     extract = db.get_history(user_id)
     if not extract:
-        return {"msg": "No transfer found or user does not exist."}
+        return {"msg": "No transactions found."}
     return extract
+
+@app.delete("/Delete/{user_id}", tags=["Admin"])
+def delete_account(user: ConfirmDelete, user_id: int):
+    """
+    Permanently delete an account and its history.
+    Verification of username and password is required.
+    """
+    success = db.delete(user.user, user.password, user_id)
+    if not success:
+        raise HTTPException(status_code=401, detail="Invalid credentials or account not found.")
+    return {'Status': 'Account deleted successfully'}
