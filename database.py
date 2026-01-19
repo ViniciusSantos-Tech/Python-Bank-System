@@ -1,11 +1,13 @@
-import psycopg2
-from sqlalchemy import create_engine, Integer, Column, String, Float, ForeignKey, DateTime, Numeric
+
+from sqlalchemy import create_engine, Integer, Column, String,ForeignKey, DateTime, Numeric
 from sqlalchemy.orm import sessionmaker, declarative_base
-import hashlib
+import os
+from dotenv import load_dotenv
 from datetime import datetime, timezone
 
+load_dotenv()
 Base = declarative_base()
-URL_BANK = "postgresql://postgres:211508@localhost:5432/postgres"
+URL_BANK = os.getenv("DATABASE_URL")
 
 
 
