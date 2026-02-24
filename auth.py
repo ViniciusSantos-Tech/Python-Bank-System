@@ -1,13 +1,28 @@
-from jose import jwt
-from datetime import datetime, timedelta, timezone
-import os 
+import jwt
+from datetime import datetime, timezone, timedelta
+import os
 from dotenv import load_dotenv
+
 load_dotenv()
+SECRET_KEY = os.getenv("SECRET_KEY")
 
-SECRET_KEY = os.getenv("SECRET_KEY") 
-ALGORITHM = os.getenv("ALGORITHM")
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY was not configured in the .env file!")
 
-def generate_token(user_id: int):
-    tempo_expira = datetime.now(timezone.utc) + timedelta(minutes=60)
-    dados = {"user_id": user_id, "exp": tempo_expira}
-    return jwt.encode(dados, SECRET_KEY, algorithm=ALGORITHM)
+def create_token(user_id, user):
+    user_data = {
+        "sub": str(user_id),
+        "exp": datetime.now(timezone.utc) + timedelta(minutes=30),
+        "name": user
+    }
+    
+    token = jwt.encode(user_data, SECRET_KEY, algorithm="HS256")
+    return token
+def verify(token):
+    try:
+        decoded_data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        return True
+    except jwt.ExpiredSignatureError:
+        return "Expired token"
+    except jwt.InvalidTokenError as e:
+        return f"Invalid token: {e}"
