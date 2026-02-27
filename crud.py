@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError
 from bank import Account
 from codify import verifyc
 from decimal import Decimal
@@ -41,5 +42,16 @@ def send_money(db: Session, destiny_cpf:str, quantity: Decimal, own_id):
         except Exception as e:
             db.rollback()
             return False, f"Error: {e}"
+def deleteuser(db: Session, user_id: str) -> bool:
+    try:
+        user = db.query(Account).filter_by(id=user_id).first()
+        if user:
+            db.delete(user)
+            db.commit()
+            db.close()
+    except SQLAlchemyError as e:
+        return False, e
+    return True, {"msg": "Account Deleted"}
+
 
 
