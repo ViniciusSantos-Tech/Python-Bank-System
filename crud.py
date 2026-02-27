@@ -42,16 +42,19 @@ def send_money(db: Session, destiny_cpf:str, quantity: Decimal, own_id):
         except Exception as e:
             db.rollback()
             return False, f"Error: {e}"
-def deleteuser(db: Session, user_id: str) -> bool:
+            
+def deleteuser(db: Session, user_id: str) -> Union[bool, str, tuple]:
     try:
         user = db.query(Account).filter_by(id=user_id).first()
-        if user:
-            db.delete(user)
-            db.commit()
-            db.close()
+        if not user:
+            return False
+        db.delete(user)
+        db.commit()
+        return True, {"msg": "Account Deleted"}
     except SQLAlchemyError as e:
+        db.rollback()
         return False, e
-    return True, {"msg": "Account Deleted"}
+
 
 
 
