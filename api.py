@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from fastapi import Depends
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
-from crud import create_user, loginapp, send_money
+from crud import create_user, loginapp, send_money, deleteuser
 from auth import create_token
 import bank
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -62,7 +62,7 @@ def login(userdata: OAuth2PasswordRequestForm = Depends(), db: Session = Depends
     verify, user, userid = loginapp(db=db, cpf=cpf, password=password)
     if not verify:
         raise HTTPException(status_code=401, detail="Incorrect password or CPF ")
-    token = create_token(usuario_id=userid, user=user)
+    token = create_token(user_id=userid, user=user)
     return {"access_token": token, "token_type": "bearer"}
 
 @app.post("/transactions", tags=["Banking"])
@@ -71,10 +71,10 @@ def transaction(userdata: UserTransactions, db: Session = Depends(get_db), token
     code, response = send_money(db=db, destiny_cpf=userdata.destiny_cpf, own_id=meu_id, quantity=userdata.quantity )
     return {"Status": code,"Msg": response }
 
-
-
-
-
-    
-
-    
+@app.delete("/deleteaccount", tags=["Delete"])
+def deletaccount(token_data = Depends(user_logged), db: Session = Depends(get_db)):
+    my_id = token_data.get("sub")
+    status, msg = deleteuser(db=db, user_id=my_id)
+    if status == False:
+        return msg
+    return msg
