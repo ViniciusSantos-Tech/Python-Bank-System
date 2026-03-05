@@ -1,57 +1,64 @@
-# $${\color{blue}\text{🏦 Personal Bank API}}$$
-### A functional **Banking REST API** featuring JWT Authentication, Argon2 Password Hashing, and SQLAlchemy.
+# $${\color{blue}\text{🏦 Secure Banking API}}$$
+### A functional **Banking REST API** built with FastAPI, JWT Authentication, SQLAlchemy ORM, and secure password hashing.
 
-This project is a backend system designed to handle secure user registration, authentication, and financial transfers.
+This project is a backend banking system designed to simulate real financial operations such as user registration, authentication, transfers between accounts, and transaction history management.
 
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
 
 > [!IMPORTANT]
 > ### 📝 Project Status
-> This is a functional study project focused on backend logic. It implements real security standards like Argon2 for passwords and JWT for session management.
+> This is a functional backend study project focused on **secure authentication**, **database integrity**, and **financial transaction logic**.  
+> The system includes password hashing, JWT-based authentication, and safe balance updates to prevent race conditions.
 
 ---
 
-## 🟦 Project Overview
+# 🟦 Project Overview
 
-The system focuses on three core pillars: Security, Database Integrity, and Financial Logic. It uses a relational database to ensure that transfers are consistent and that user data is protected.
+The system simulates a simple banking infrastructure where users can create accounts, authenticate, send money to other users, and view their transaction history.
 
-### 🟦 Core Logic:
-- **Authentication:** JWT (JSON Web Tokens) used via the `OAuth2PasswordBearer` flow.
-- **Security:** Passwords are never stored in plain text; they are hashed using **Argon2**.
-- **Database:** Managed by **SQLAlchemy** with support for PostgreSQL (via `DATABASE_URL`).
-- **Safety:** Transfers use `with_for_update()` to prevent race conditions during balance updates.
+The project emphasizes three main pillars:
 
----
+- **Security**
+- **Reliable financial operations**
+- **Structured backend architecture**
 
-## 🟦 API Endpoints
-
-The API is organized into the following functional groups:
-
-### 🔐 Authentication
-- **`POST /login`**: Users provide their CPF (as username) and Password to receive an `access_token`.
-
-### 👤 User Management
-- **`POST /register`**: Registers a new user with Full Name, Gmail, CPF, and Username. All new accounts start with a balance of **100**.
-
-### 💰 Banking Operations
-- **`POST /transactions`**: Allows a logged-in user to send money to another user by providing the destination CPF.
-  - *Validation:* Prevents sending to yourself, sending 0, or sending more than your current balance.
+Each account starts with an **initial balance of 100 units**, allowing users to immediately test transactions.
 
 ---
 
-## 🛠️ Technologies Used
+# 🟦 Core System Logic
 
-- **Framework:** [FastAPI](https://fastapi.tiangolo.com/)
-- **ORM:** [SQLAlchemy](https://www.sqlalchemy.org/)
-- **Security & Hashing:** Argon2 (`argon2-cffi`)
-- **Token Management:** PyJWT
-- **Environment:** Python-dotenv
-- **Validation:** Pydantic
+### 🔐 Authentication System
+Authentication is handled using **JWT tokens**.
+
+- Users authenticate with **CPF and password**
+- A **JWT access token** is returned
+- Protected routes require a valid token via **OAuth2PasswordBearer**
 
 ---
 
-## 🛠️ Local Setup
+### 🔒 Password Security
 
-1. **Clone the repository:**
-   ```bash
-   git clone <your-repository-url>
+Passwords are **never stored in plain text**.
+
+They are processed using a hashing function before being stored in the database. During login, the provided password is verified against the stored hash.
+
+---
+
+### 🗄️ Database Design
+
+The system uses **SQLAlchemy ORM** with relational tables.
+
+Main entities:
+
+**BankAccounts**
+- Stores user information
+- Contains current balance
+- Uses unique identifiers such as CPF, Gmail, and Username
+
+**History**
+- Stores all financial transactions
+- Linked to accounts through a foreign key
+- Automatically records timestamps
+
+---
